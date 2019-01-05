@@ -48,6 +48,19 @@ const ItemCtrl = (function(){
             });
             return found;
         },
+        updateItem: function(name, calories){
+            // Calories to number, because it's coming from a form
+            calories = parseInt(calories);
+            let found = null; 
+            data.items.forEach(function(item){
+                if(item.id === data.currentItem.id){
+                    item.name = name;
+                    item.calories = calories;
+                    found = item;
+                }
+            });
+            return found;
+        },
         setCurrentItem: function(item){
             data.currentItem = item;
         },
@@ -74,6 +87,7 @@ const ItemCtrl = (function(){
 const UICtrl = (function(){
     const UISelectors = {
         itemList: '#item-list',
+        listItems: '#item-list li',
         addBtn: '.add-btn',
         updateBtn: '.update-btn',
         deleteBtn: '.delete-btn',
@@ -124,6 +138,22 @@ const UICtrl = (function(){
             `;
             // Insert item
             document.querySelector(UISelectors.itemList).insertAdjacentElement('beforeend', li);
+        },
+        updateListItem: function(item){
+            let listItems = document.querySelectorAll(UISelectors.listItems); // this gives a node list
+            // Convert node list into an array
+            listItems = Array.from(listItems);
+            listItems.forEach(function(listItem){
+                const itemID = listItem.getAttribute('id');
+                if(itemID === `item-${item.id}`){
+                    document.querySelector(`#${itemID}`).innerHTML = `
+                        <strong>${item.name}: </strong> <em>${item.calories} Calories</em>
+                        <a href="#" class="secondary-content">
+                        <i class="edit-item fa fa-pencil"></i>
+                        </a>`;
+                }
+            });
+            
         },
         // Clear input fields after we add item to the list
         clearInput: function(){
@@ -222,7 +252,12 @@ const App = (function(ItemCtrl, UICtrl){
     }
     // Update item submit
     const itemUpdateSubmit = function(e){
-        console.log('update');
+        // Get item input
+        const input = UICtrl.getItemInput();
+        //Update item
+        const updatedItem = ItemCtrl.updateItem(input.name, input.calories);
+        // Update UI
+        UICtrl.updateListItem(updatedItem);
         e.preventDefault();
     }
 
