@@ -46,6 +46,9 @@ const StorageCtrl = (function(){
                 }
             });
             localStorage.setItem('items', JSON.stringify(items));
+        },
+        clearItemsFromStorage: function(){
+            localStorage.removeItem('items');
         }
     }
 })();
@@ -379,6 +382,8 @@ const App = (function(ItemCtrl, StorageCtrl, UICtrl){
         UICtrl.showTotalCalories(totalCalories);
         // Remove from UI
         UICtrl.removeItems();
+        // Clear from local storage
+        StorageCtrl.clearItemsFromStorage();
         // Hide UL
         UICtrl.hideList();
     }
